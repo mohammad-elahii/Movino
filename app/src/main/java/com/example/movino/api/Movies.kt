@@ -15,6 +15,9 @@ data class Movie(
     val poster: String,
     val genres: List<String>,
     val images: List<String>,
+    val country: String? = null,
+    val year: String? = null,
+    val imdb_rating: String? = null,
 )
 
 @Serializable

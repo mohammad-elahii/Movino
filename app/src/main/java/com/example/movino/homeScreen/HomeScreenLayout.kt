@@ -4,32 +4,27 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -39,8 +34,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movino.api.GenreItems
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.core.R
+import coil3.compose.AsyncImage
 import com.example.movino.api.Movie
-
+import com.example.movino.homeScreen.HomeScreenViewModel
+import com.example.movino.homeScreen.HomeUIState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,6 +83,7 @@ fun HomeScreen(
             selectedGenreId = selectedGenreId.value,
             filteredMovies = filteredMovies.value,
             uiState = uiState.value,
+            movies = filteredMovies.value,
             onGenreSelect = { genreId -> viewModel.selectGenre(genreId) }
         )
     }
@@ -86,12 +96,13 @@ fun HomeContent(
     selectedGenreId: Int,
     filteredMovies: List<Movie>,
     uiState: HomeUIState,
+    movies: List<Movie>,
     onGenreSelect: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(start = 16.dp)
+            .padding(start =  16.dp)
     ) {
         when (uiState) {
             is HomeUIState.Loading -> {
@@ -115,9 +126,7 @@ fun HomeContent(
                     selectedGenreId = selectedGenreId,
                     onGenreSelect = onGenreSelect
                 )
-                
                 Spacer(Modifier.height(8.dp))
-                
                 Text(
                     "Movies",
                     style = MaterialTheme.typography.titleLarge,
@@ -125,17 +134,22 @@ fun HomeContent(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(Modifier.height(8.dp))
-                
+
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(filteredMovies.take(10), key = { it.id }) { movie ->
+                    items(movies.take(10), key = { it.id }) { movie ->
                         FeaturedMovieCard(movie = movie)
                     }
                 }
-                
-
-                
+                Spacer(Modifier.height(16.dp))
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(movies, key = { it.id }) { movie ->
+                        DetailedMovieCard(movie = movie)
+                    }
+                }
 
             }
         }
@@ -228,6 +242,111 @@ fun FeaturedMovieCard(
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun DetailedMovieCard(
+    movie: Movie,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .width(375.dp)
+            .height(160.dp).padding(end = 16.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            AsyncImage(
+                model = movie.poster,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(107.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 18.dp, bottom = 18.dp, end = 1.dp)
+                ,
+            ) {
+
+                Text(
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Column(
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+
+                        Text(
+                            modifier = Modifier.padding(top = 8.dp),
+                            text = movie.country ?: "N/A",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(
+
+                    ) {
+
+                        Text(
+                            modifier = Modifier.padding(top = 8.dp),
+                            text = movie.year ?: "N/A",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(
+
+                    ) {
+
+                        Text(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            text = movie.genres.take(2).joinToString(", "),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.secondary,
+                                shape = MaterialTheme.shapes.medium
+                            )
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "IMDb: ${movie.imdb_rating ?: "N/A"}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                }
+            }
         }
     }
 }
