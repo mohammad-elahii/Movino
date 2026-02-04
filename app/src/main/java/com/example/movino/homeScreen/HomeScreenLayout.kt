@@ -8,22 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+
+
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,19 +35,13 @@ import com.example.movino.api.GenreItems
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.core.R
-import coil3.compose.AsyncImage
+import androidx.compose.ui.res.stringResource
+import com.example.movino.R
 import com.example.movino.api.Movie
-import com.example.movino.homeScreen.HomeScreenViewModel
-import com.example.movino.homeScreen.HomeUIState
+import com.example.movino.ui.components.GlobalTopAppBar
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,18 +50,16 @@ fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "fill later")
-                },
-                actions = {
-                    IconButton(onClick = {
-                        // fill later
-                    }) {
-
-                    }
-                }
-            )
+            GlobalTopAppBar(
+                title = stringResource(R.string.home),
+                onIconClick = { }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_search_icon),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     ) { innerPadding ->
         val genresState = viewModel.genres.collectAsStateWithLifecycle()
@@ -102,7 +92,7 @@ fun HomeContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(start =  16.dp)
+            .padding(start = 16.dp)
     ) {
         when (uiState) {
             is HomeUIState.Loading -> {
@@ -218,7 +208,7 @@ fun FeaturedMovieCard(
             modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
-                model = movie.poster,
+                model = movie.images[0],
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
@@ -254,7 +244,8 @@ fun DetailedMovieCard(
     Card(
         modifier = modifier
             .width(375.dp)
-            .height(160.dp).padding(end = 16.dp),
+            .height(160.dp)
+            .padding(end = 16.dp),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -278,8 +269,7 @@ fun DetailedMovieCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 18.dp, bottom = 18.dp, end = 1.dp)
-                ,
+                    .padding(top = 18.dp, bottom = 18.dp, end = 1.dp),
             ) {
 
                 Text(
@@ -290,8 +280,7 @@ fun DetailedMovieCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Column(
-                ) {
+                Column {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -305,9 +294,7 @@ fun DetailedMovieCard(
                         )
                     }
 
-                    Row(
-
-                    ) {
+                    Row {
 
                         Text(
                             modifier = Modifier.padding(top = 8.dp),
@@ -317,9 +304,7 @@ fun DetailedMovieCard(
                         )
                     }
 
-                    Row(
-
-                    ) {
+                    Row {
 
                         Text(
                             modifier = Modifier.padding(vertical = 8.dp),
