@@ -70,8 +70,8 @@ fun HomeScreen(
     ) { innerPadding ->
         val genresState = viewModel.genres.collectAsStateWithLifecycle()
         val selectedGenreId = viewModel.selectedGenreId.collectAsStateWithLifecycle()
-        val uiState = viewModel.uiState.collectAsStateWithLifecycle()
         val filteredMovies = viewModel.filteredMovies.collectAsStateWithLifecycle()
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
         HomeContent(
             modifier = Modifier.padding(innerPadding),
@@ -96,7 +96,7 @@ fun HomeContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(start =  16.dp)
     ) {
         when (uiState) {
             is HomeUIState.Loading -> {
@@ -121,6 +121,22 @@ fun HomeContent(
                     onGenreSelect = onGenreSelect
                 )
                 Spacer(Modifier.height(8.dp))
+                Text(
+                    "Movies",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(start = 1.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(8.dp))
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(movies.take(10), key = { it.id }) { movie ->
+                        FeaturedMovieCard(movie = movie)
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -146,6 +162,7 @@ fun GenresFilterRow(
     ) {
         items(genres, key = { it.id }) { genre ->
             val isSelected = genre.id == selectedGenreId
+
             FilterChip(
                 shape = MaterialTheme.shapes.large,
                 colors = FilterChipDefaults.filterChipColors(
@@ -181,6 +198,49 @@ fun GenresFilterRow(
 }
 
 @Composable
+fun FeaturedMovieCard(
+    movie: Movie,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .width(265.dp)
+            .height(148.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AsyncImage(
+                model = movie.poster,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                    )
+            )
+
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.labelLarge,
+                color = Color(0xFFFFFFFF),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun DetailedMovieCard(
     movie: Movie,
     modifier: Modifier = Modifier
@@ -188,7 +248,7 @@ fun DetailedMovieCard(
     Card(
         modifier = modifier
             .width(375.dp)
-            .height(160.dp),
+            .height(160.dp).padding(end = 16.dp),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
