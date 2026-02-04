@@ -1,5 +1,6 @@
 package com.example.movino.splash
 
+import SplashUI
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
