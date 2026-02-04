@@ -25,6 +25,7 @@ data class Metadata(
     val total_count: Int
 )
 
+@Serializable
 data class MovieByID(
     val id: Int,
     val title: String,
@@ -40,4 +41,10 @@ data class MovieByID(
     val imdb_rating: String,
     val genres: List<String>,
     val images: List<String>
+)
+
+@Serializable
+data class GenreItems(
+    val id: Int,
+    val name: String
 )

@@ -13,4 +13,8 @@ class GetMovie(val client: HttpClient) {
         return client.get("movies/$id").body()
     }
 
+    suspend fun getGenres(): List<GenreItems> {
+        return client.get("genres").body()
+    }
+
 }
