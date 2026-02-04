@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -45,13 +46,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -87,50 +81,12 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "fill later")
-                },
-                actions = {
-                    IconButton(onClick = {
-                        // fill later
-                    }) {
-
-    LaunchedEffect(Unit) {
-        viewModel.errorEvents.collect { event ->
-            when (event) {
-                is HomeEvent.ShowError -> {
-                    val result = snackbarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = "Retry",
-                        duration = SnackbarDuration.Short
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.retry()
-                    }
-                }
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                Snackbar(
-                    shape = RoundedCornerShape(4.dp),
-                    snackbarData = data,
-                    modifier = Modifier.padding(vertical = 16.dp, horizontal = 34.dp),
-                    actionColor = MaterialTheme.colorScheme.primary,
-                    containerColor = MaterialTheme.colorScheme.onSurface,
-                    contentColor = MaterialTheme.colorScheme.background,
-                )
-            }
-        }
-    }
-    Scaffold(
-        topBar = {
             GlobalTopAppBar(
                 title = stringResource(R.string.home),
                 onIconClick = { }
             ) {
                 Icon(
+                    modifier = Modifier.size(24.dp),
                     painter = painterResource(R.drawable.ic_search_icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onBackground
@@ -144,7 +100,7 @@ fun HomeScreen(
                     shape = RoundedCornerShape(4.dp),
                     snackbarData = data,
                     modifier = Modifier.padding(vertical = 16.dp, horizontal = 34.dp),
-                    actionColor = MaterialTheme.colorScheme.primary,
+                    actionContentColor = MaterialTheme.colorScheme.primary,
                     containerColor = MaterialTheme.colorScheme.onSurface,
                     contentColor = MaterialTheme.colorScheme.background,
                 )
@@ -186,7 +142,10 @@ fun HomeContent(
     ) {
         when (uiState) {
             is HomeUIState.Loading -> {
-                CircularProgressIndicator()
+                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+
+                    LoadingIndicator()
+                }
             }
 
             is HomeUIState.Error -> {
@@ -194,43 +153,51 @@ fun HomeContent(
             }
 
             is HomeUIState.Success -> {
-                Text(
-                    "Genres",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 1.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(Modifier.height(8.dp))
-                GenresFilterRow(
-                    genres = genres,
-                    selectedGenreId = selectedGenreId,
-                    onGenreSelect = onGenreSelect
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    "Movies",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 1.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(Modifier.height(8.dp))
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(movies.take(10), key = { it.id }) { movie ->
-                        FeaturedMovieCard(movie = movie)
-                    }
-                }
-                Spacer(Modifier.height(16.dp))
                 LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(movies, key = { it.id }) { movie ->
+                    item(key = "genres") {
+                        Column(modifier = Modifier.padding(end = 16.dp)) {
+                            Text(
+                                stringResource(R.string.genres),
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(start = 1.dp),
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            GenresFilterRow(
+                                genres = genres,
+                                selectedGenreId = selectedGenreId,
+                                onGenreSelect = onGenreSelect
+                            )
+                        }
+                    }
+                    item(key = "movies") {
+                        Text(
+                            stringResource(R.string.movies),
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(start = 1.dp),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    item(key = "movieCard") {
+                        LazyRow(
+                            modifier = Modifier.height(164.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(movies.take(10), key = { it.id }) { movie ->
+                                FeaturedMovieCard(movie = movie)
+                            }
+                        }
+                    }
+                    items(
+                        items = movies,
+                        key = { it.id }
+                    ) { movie ->
                         DetailedMovieCard(movie = movie)
                     }
                 }
-
             }
         }
     }
@@ -467,5 +434,18 @@ fun DetailedMovieCard(
                 }
             }
         }
+    }
+}
+@Composable
+fun LoadingIndicator(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
