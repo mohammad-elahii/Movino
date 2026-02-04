@@ -23,8 +23,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -36,6 +43,7 @@ import coil3.compose.AsyncImage
 import com.example.movino.api.GenreItems
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -73,6 +81,46 @@ fun HomeScreen(
                         viewModel.retry()
                     }
                 }
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "fill later")
+                },
+                actions = {
+                    IconButton(onClick = {
+                        // fill later
+                    }) {
+
+    LaunchedEffect(Unit) {
+        viewModel.errorEvents.collect { event ->
+            when (event) {
+                is HomeEvent.ShowError -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = "Retry",
+                        duration = SnackbarDuration.Short
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.retry()
+                    }
+                }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Snackbar(
+                    shape = RoundedCornerShape(4.dp),
+                    snackbarData = data,
+                    modifier = Modifier.padding(vertical = 16.dp, horizontal = 34.dp),
+                    actionColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.background,
+                )
             }
         }
     }
@@ -138,11 +186,11 @@ fun HomeContent(
     ) {
         when (uiState) {
             is HomeUIState.Loading -> {
-                Text("Loading genres...")
+                CircularProgressIndicator()
             }
 
             is HomeUIState.Error -> {
-                Text("Error: ${uiState.message}")
+
             }
 
             is HomeUIState.Success -> {
@@ -378,6 +426,7 @@ fun DetailedMovieCard(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
+
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_genres),
