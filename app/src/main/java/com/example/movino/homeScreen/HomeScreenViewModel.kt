@@ -6,7 +6,9 @@ import com.example.movino.api.GenreItems
 import com.example.movino.api.GetMovie
 import com.example.movino.api.Movie
 import com.example.movino.api.initializeClient
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -28,6 +30,9 @@ class HomeScreenViewModel(
     private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState.Loading)
     val uiState: StateFlow<HomeUIState> = _uiState
 
+    private val _errorEvents = MutableSharedFlow<HomeEvent>(replay = 0, extraBufferCapacity = 1)
+    val errorEvents: SharedFlow<HomeEvent> = _errorEvents
+
     init {
         fetchGenres()
         fetchMovies()
@@ -42,7 +47,9 @@ class HomeScreenViewModel(
                 _genres.value = listOf(allGenre) + response
                 _uiState.value = HomeUIState.Success
             } catch (e: Exception) {
-                _uiState.value = HomeUIState.Error(e.message ?: "Unknown error")
+                val message = e.message ?: "Unknown error"
+                _uiState.value = HomeUIState.Error(message)
+                _errorEvents.emit(HomeEvent.ShowError(message))
             }
         }
     }
@@ -54,8 +61,18 @@ class HomeScreenViewModel(
                 _movies.value = response.data
                 filterMovies()
             } catch (e: Exception) {
-                _uiState.value = HomeUIState.Error(e.message ?: "Unknown error")
+                val message = e.message ?: "Unknown error"
+                _uiState.value = HomeUIState.Error(message)
+                _errorEvents.emit(HomeEvent.ShowError(message))
             }
+        }
+    }
+
+    fun retry() {
+        viewModelScope.launch {
+            _uiState.value = HomeUIState.Loading
+            fetchGenres()
+            fetchMovies()
         }
     }
 
