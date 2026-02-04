@@ -26,9 +26,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import com.example.movino.api.GenreItems
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -77,6 +81,7 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding),
             genres = genresState.value,
             selectedGenreId = selectedGenreId.value,
+            filteredMovies = filteredMovies.value,
             uiState = uiState.value,
             movies = filteredMovies.value,
             onGenreSelect = { genreId -> viewModel.selectGenre(genreId) }
@@ -89,6 +94,7 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     genres: List<GenreItems>,
     selectedGenreId: Int,
+    filteredMovies: List<Movie>,
     uiState: HomeUIState,
     movies: List<Movie>,
     onGenreSelect: (Int) -> Unit
