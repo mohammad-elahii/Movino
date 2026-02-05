@@ -12,43 +12,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    primaryContainer = PrimaryContainerDark,
-    secondary = SecondaryDark,
-    background = BackgroundDark,
-    surface = SurfaceDark,
-    surfaceVariant = SurfaceVariantDark,
-
-    onPrimary = OnPrimaryDark,
-    onPrimaryContainer = OnPrimaryContainerDark,
-    onSecondary = OnSecondaryDark,
-    onBackground = OnBackgroundDark,
-    onSurface = OnSurfaceDark,
-    onSurfaceVariant = OnSurfaceVariantDark
+    primary = Purple80,
+    secondary = PurpleGrey80,
+    tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    primaryContainer = PrimaryContainerLight,
-    secondary = SecondaryLight,
-    background = BackgroundLight,
-    surface = SurfaceLight,
-    surfaceVariant = SurfaceVariantLight,
+    primary = Purple40,
+    secondary = PurpleGrey40,
+    tertiary = Pink40
 
-    onPrimary = OnPrimaryLight,
-    onPrimaryContainer = OnPrimaryContainerLight,
-    onSecondary = OnSecondaryLight,
-    onBackground = OnBackgroundLight,
-    onSurface = OnSurfaceLight,
-    onSurfaceVariant = OnSurfaceVariantLight
-
+    /* Other default colors to override
+    background = Color(0xFFFFFBFE),
+    surface = Color(0xFFFFFBFE),
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onTertiary = Color.White,
+    onBackground = Color(0xFF1C1B1F),
+    onSurface = Color(0xFF1C1B1F),
+    */
 )
 
 @Composable
 fun MovinoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -64,7 +53,6 @@ fun MovinoTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        shapes = shape,
         content = content
     )
 }

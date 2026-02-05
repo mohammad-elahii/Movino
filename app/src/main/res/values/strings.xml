@@ -1,14 +1,3 @@
 <resources>
     <string name="app_name">Movino</string>
-    <string name="home">Home</string>
-    <string name="api_error">Server Error</string>
-    <string name="retry">Retry</string>
-    <string name="genres">Genres</string>
-    <string name="movies">Movies</string>
-    <string name="search">Search</string>
-    <string name="text_field_hint">search movies</string>
-    <string name="not_found_error">No result found</string>
-    <string name="not_found_try_again">try a different search item</string>
-    <string name="handling_error">Something went wrong</string>
-    <string name="error_retry_statement">Please try again</string>
 </resources>
