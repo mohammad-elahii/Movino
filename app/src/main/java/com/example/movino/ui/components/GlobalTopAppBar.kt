@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +23,11 @@ fun GlobalTopAppBar(
     title: String,
     onIconClick: () -> Unit,
     modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
     icon: @Composable () -> Unit
 ) {
     TopAppBar(
+        scrollBehavior = scrollBehavior,
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),

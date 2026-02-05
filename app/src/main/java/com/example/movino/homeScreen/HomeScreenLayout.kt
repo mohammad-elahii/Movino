@@ -30,11 +30,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -79,11 +81,15 @@ fun HomeScreen(
         }
     }
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GlobalTopAppBar(
                 title = stringResource(R.string.home),
-                onIconClick = { }
+                onIconClick = { },
+                scrollBehavior = scrollBehavior
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
@@ -142,10 +148,7 @@ fun HomeContent(
     ) {
         when (uiState) {
             is HomeUIState.Loading -> {
-                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-
-                    LoadingIndicator()
-                }
+                LoadingIndicator()
             }
 
             is HomeUIState.Error -> {
@@ -436,6 +439,7 @@ fun DetailedMovieCard(
         }
     }
 }
+
 @Composable
 fun LoadingIndicator(
     modifier: Modifier = Modifier
