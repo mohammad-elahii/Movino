@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DetailScreenViewModel(
-    private val movieId: String,
-    private val getMovie: GetMovie = GetMovie(initializeClient())
+        private val movieId: String,
+        private val getMovie: GetMovie = GetMovie(initializeClient())
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DetailUIState>(DetailUIState.Loading)
