@@ -3,19 +3,16 @@ package com.example.movino.detailScreen
 data class Movie(
         val title: String,
         val year: String,
-        val contentRating: String, // e.g. "R"
-        val runtime: String, // e.g. "142 min"
-        val genre: String, // e.g. "Drama"
-        val imdbRating: String, // e.g. "9.3"
-        val metaRating: String, // e.g. "81"
+        val contentRating: String,
+        val runtime: String,
+        val genre: String,
+        val imdbRating: String,
+        val metaRating: String,
         val description: String,
         val director: String,
         val writers: String,
         val actors: String,
-        val posterUrl:
-                String // For now using URL string, but will use a placeholder or generic image
-// logic in UI
-)
+        val posterUrl: String)
 
 sealed class DetailUIState {
     object Loading : DetailUIState()

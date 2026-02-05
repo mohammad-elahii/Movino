@@ -15,7 +15,7 @@ class DetailScreenViewModel : ViewModel() {
     }
 
     private fun loadMovie() {
-        // Dummy data simulating "The Shawshank Redemption"
+
         val movie =
                 Movie(
                         title = "The Shawshank Redemption",
@@ -31,7 +31,7 @@ class DetailScreenViewModel : ViewModel() {
                         writers = "Stephan King, Frank Darabont",
                         actors = "Tim Robbins, Morgan Freeman, Bob Gunton",
                         posterUrl =
-                                "https://m.media-amazon.com/images/M/MV5BNDE3ODUxMDQ4MV5BMl5BanBnXkFtZTcwMjY3MzXsw._V1_.jpg" // URL might not load without internet permission, will handle in UI
+                                "https://m.media-amazon.com/images/M/MV5BNDE3ODUxMDQ4MV5BMl5BanBnXkFtZTcwMjY3MzXsw._V1_.jpg"
                 )
         _uiState.value = DetailUIState.Success(movie)
     }
