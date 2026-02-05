@@ -148,7 +148,7 @@ fun GlobalDetailedMovieCard(movie: Movie, modifier: Modifier = Modifier, onClick
                                 .padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = "IMDb: ${movie.imdb_rating ?: "0.0"}",
+                            text = "IMDb: ${movie.imdbRating ?: "0.0"}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondary
                         )
