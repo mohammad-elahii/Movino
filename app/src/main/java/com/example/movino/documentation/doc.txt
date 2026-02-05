@@ -1,0 +1,53 @@
+
+    Müde / Movino Project Documentation
+  
+    Overview
+     Müde  is an Android application built for browsing and searching movies.
+ 
+   Architecture: MVVM (Model   View   ViewModel)
+   The application adheres to the   MVVM   architectural pattern, ensuring a clean separation of concerns:
+         Model  : Data layer consisting of repositories and data classes (e.g., `Movie`, `GenreItems`) responsible for fetching data from the API.
+         View  : Composable functions in layers like `homeScreen`, `searchScreen`, and `detailScreen` that subscribe to UI states and display data.
+         ViewModel  : Classes like `HomeScreenViewModel`, `SearchViewModel`, and `DetailScreenViewModel` that manage UI state, handle business logic (like pagination and filtering), and survive configuration changes.
+  
+    Technology Stack
+         Language  : Kotlin
+         UI  : Jetpack Compose (Modern native UI toolkit)
+         Networking  : Ktor Client (Content Negotiation, Logging, Serialization)
+         Image Loading  : Coil (Compose integration)
+         Navigation  : Navigation Compose
+         Serialization  : Kotlinx Serialization
+         Dependency Injection  : Functional injection (e.g., passing `GetMovie` use case to ViewModels)
+  
+    Key Features
+  
+    1. Screens
+         Home Screen : Displays a list of movies with genre filtering.
+              Pagination : Implemented in `HomeScreenViewModel` to load movies incrementally as the user scrolls (`loadMoreMovies`).
+              Genre Filtering : Users can filter movies by genres dynamically.
+         Search Screen : Allows users to search for specific movies.
+         Detail Screen : Shows in   depth information about a selected movie.
+  
+    2. Global Components
+        To ensure UI consistency and reusability, several global components were created:
+            `GlobalMovieCard`: Standardized card component for displaying movie thumbnails and info.
+            `GlobalSnackbar`: Custom snackbar for showing messages (e.g., errors or simple notifications).
+            `GlobalLoadingIndicator`: Uniform loading spinner used across screens.
+            `GlobalSearchLoadingIndicator`: Specialized loading state for search contexts.
+            `GlobalGenreRow`: Reusable row component for displaying genre chips.
+            `GlobalTopAppBar`: Consistent app bar used across different screens.
+  
+    3. API Integration
+         Source  : `https://moviesapi.ir/api/v1/`
+         Client  : Ktor configured with JSON serialization and logging.
+         Endpoints  : Fetches movies, genres, and details.
+  
+    "Things We Did"
+        Project Setup  : Initialized with Compose, Coil for images, and Ktor for networking.
+        Architecture Implementation  : Built a robust MVVM structure with structured packages (`api`, `ui`, `homeScreen`, etc.).
+        Pagination Logic  : Handled infinite scrolling in the Home Screen to efficiently load large datasets.
+        Component Refactoring  : Extracted common UI elements into `ui/components` to create a library of reusable "Global" components.
+        Error Handling  : Implemented centralized error handling in ViewModels via `HomeEvent` and UI states.
+
+        Theming  : Custom theme setup in `ui/theme`.
+
