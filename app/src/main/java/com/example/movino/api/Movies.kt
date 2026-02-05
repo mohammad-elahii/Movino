@@ -27,17 +27,17 @@ data class Metadata(
 @Serializable
 data class MovieByID(
         val id: Int,
-        val title: String,
-        val year: String,
-        val rated: String,
-        val runtime: String,
-        val director: String,
-        val writer: String,
-        val actors: String,
-        val plot: String,
-        val country: String,
-        val metascore: String,
-        val imdb_rating: String,
+        val title: String?=null,
+        val year: String? = null,
+        val rated: String? = null,
+        val runtime: String? = null,
+        val director: String? = null,
+        val writer: String? = null,
+        val actors: String? = null,
+        val plot: String? = null,
+        val country: String? =null,
+        val metascore: String? = null,
+        val imdb_rating: String? = null,
         val genres: List<String>? = null,
         val images: List<String>? = null
 )
