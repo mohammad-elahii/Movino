@@ -31,7 +31,7 @@ class DetailScreenViewModel : ViewModel() {
                         writers = "Stephan King, Frank Darabont",
                         actors = "Tim Robbins, Morgan Freeman, Bob Gunton",
                         posterUrl =
-                                "https://m.media-amazon.com/images/M/MV5BNDE3ODUxMDQ4MV5BMl5BanBnXkFtZTcwMjY3MzXsw._V1_.jpg"
+                            "http://moviesapi.ir/images/tt0111161_screenshot2.jpg",
                 )
         _uiState.value = DetailUIState.Success(movie)
     }

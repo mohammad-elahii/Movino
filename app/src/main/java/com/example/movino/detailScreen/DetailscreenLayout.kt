@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,14 +28,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.R
 import coil3.compose.AsyncImage
+import com.example.movino.R
 import com.example.movino.ui.components.GlobalTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,32 +43,34 @@ fun Detailscreen(viewModel: DetailScreenViewModel, onBackClick: () -> Unit = {})
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-            topBar = {
-                GlobalTopAppBar(
-                        title = "Movie",
-                        onIconClick = onBackClick,
-                    icon = {
-                        Icon(
-                            painter = painterResource(com.example.movino.R.drawable.ic_back_icon),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                )
-            }
+        topBar = {
+            GlobalTopAppBar(
+                title = stringResource(R.string.movies),
+                onIconClick = onBackClick,
+                icon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_back_icon),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
+        }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             when (val state = uiState) {
                 is DetailUIState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
+
                 is DetailUIState.Error -> {
-                    Text(
-                            text = state.message,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.align(Alignment.Center)
-                    )
+
                 }
+
                 is DetailUIState.Success -> {
                     MovieDetailContent(movie = state.movie)
                 }
@@ -83,129 +82,140 @@ fun Detailscreen(viewModel: DetailScreenViewModel, onBackClick: () -> Unit = {})
 @Composable
 fun MovieDetailContent(movie: Movie) {
     Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp),
     ) {
         AsyncImage(
-                model = movie.posterUrl,
-                contentDescription = movie.title,
-                modifier =
-                        Modifier.fillMaxWidth()
-                                .aspectRatio(
-                                        1.5f
-                                )
-                                .clip(RoundedCornerShape(24.dp)),
-                contentScale = ContentScale.Crop
+            model = movie.posterUrl,
+            contentDescription = movie.title,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .width(380.dp)
+                    .height(214.dp)
+                    .clip(MaterialTheme.shapes.medium),
+            contentScale = ContentScale.Crop
         )
+        Spacer(Modifier.height(16.dp))
 
         Text(
-                text = movie.title,
-                style =
-                        MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp
-                        )
-        )
+            text = movie.title,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
 
-        Text(
-                text = "${movie.year} . ${movie.contentRating} . ${movie.runtime} . ${movie.genre}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
         )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = "${movie.year} . ${movie.contentRating} . ${movie.runtime} . ${movie.genre}",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Spacer(Modifier.height(16.dp))
 
         Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            RatingBadge(
-                    backgroundColor = Color(0xFFF6C700), // IMDb Yellow
-                    textColor = Color.Black,
-                    icon = { Text(text = "IMDb", fontWeight = FontWeight.Black, fontSize = 10.sp) },
-                    score = movie.imdbRating
-            )
 
-            RatingBadge(
-                    backgroundColor = Color(0xFFECA046), // Metacritic Orangeish
-                    textColor = Color.Black,
-                    icon = {
-                        Box(
-                                modifier =
-                                        Modifier.size(16.dp)
-                                                .background(
-                                                        Color.Black,
-                                                        shape = RoundedCornerShape(50)
-                                                ),
-                                contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                    "M",
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold
-                            )
-                        }
-                    },
-                    score = movie.metaRating
-            )
+            Row(
+                modifier =
+                    Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.extraSmall
+                        )
+                        .width(68.dp)
+                        .height(36.dp)
+                        .padding(all = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painterResource(R.drawable.ic_imdb),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.onSecondary
+                    )
+                )
+
+                Text(
+                    text = movie.imdbRating,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+            Row(
+                modifier =
+                    Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.extraSmall
+                        )
+                        .width(68.dp)
+                        .height(36.dp)
+                        .padding(all = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painterResource(R.drawable.ic_metacritic),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.onSecondary
+                    )
+                )
+                Text(
+                    text = movie.metaRating,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
+        Spacer(Modifier.height(16.dp))
 
         Surface(
-                color = Color(0xFFFFF9F2),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+            color = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                    text = movie.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp),
-                    lineHeight = 20.sp
+                text = movie.description,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
+        Spacer(Modifier.height(16.dp))
         CreditRow(label = "Director", value = movie.director)
+        Spacer(Modifier.height(16.dp))
         CreditRow(label = "Writers", value = movie.writers)
+        Spacer(Modifier.height(16.dp))
         CreditRow(label = "Actors", value = movie.actors)
-
+        Spacer(Modifier.height(16.dp))
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
-@Composable
-fun RatingBadge(
-        backgroundColor: Color,
-        textColor: Color,
-        icon: @Composable () -> Unit,
-        score: String
-) {
-    Row(
-            modifier =
-                    Modifier.background(backgroundColor, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        icon()
-        Text(
-                text = score,
-                color = textColor,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
 
 @Composable
 fun CreditRow(label: String, value: String) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         Text(
-                text = label,
-                style =
-                        MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFFD35D5D)
-                        ),
-                modifier = Modifier.width(80.dp)
+            text = label,
+            style =
+                MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.width(56.dp)
         )
-        Text(text = value, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
