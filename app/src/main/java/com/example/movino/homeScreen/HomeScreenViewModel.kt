@@ -23,7 +23,7 @@ class HomeScreenViewModel(
     val selectedGenreId: StateFlow<Int> = _selectedGenreId
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
-    
+
     private val _filteredMovies = MutableStateFlow<List<Movie>>(emptyList())
     val filteredMovies: StateFlow<List<Movie>> = _filteredMovies
 

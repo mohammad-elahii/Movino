@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.movino.R
 import com.example.movino.ui.components.GlobalTopAppBar
+import com.example.movino.api.MovieByID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +81,7 @@ fun Detailscreen(viewModel: DetailScreenViewModel, onBackClick: () -> Unit = {})
 }
 
 @Composable
-fun MovieDetailContent(movie: Movie) {
+fun MovieDetailContent(movie: MovieByID) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,7 +89,7 @@ fun MovieDetailContent(movie: Movie) {
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
     ) {
         AsyncImage(
-            model = movie.posterUrl,
+            model = movie.images?.get(0),
             contentDescription = movie.title,
             modifier =
                 Modifier
@@ -96,7 +97,7 @@ fun MovieDetailContent(movie: Movie) {
                     .width(380.dp)
                     .height(214.dp)
                     .clip(MaterialTheme.shapes.medium),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(16.dp))
 
@@ -108,7 +109,7 @@ fun MovieDetailContent(movie: Movie) {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "${movie.year} . ${movie.contentRating} . ${movie.runtime} . ${movie.genre}",
+            text = "${movie.year} . ${movie.rated} . ${movie.runtime} . ${movie.genres.joinToString(", ")}",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -142,7 +143,7 @@ fun MovieDetailContent(movie: Movie) {
                 )
 
                 Text(
-                    text = movie.imdbRating,
+                    text = movie.imdb_rating,
                     color = MaterialTheme.colorScheme.onSecondary,
                     style = MaterialTheme.typography.labelLarge
                 )
@@ -169,7 +170,7 @@ fun MovieDetailContent(movie: Movie) {
                     )
                 )
                 Text(
-                    text = movie.metaRating,
+                    text = movie.metascore,
                     color = MaterialTheme.colorScheme.onSecondary,
                     style = MaterialTheme.typography.labelLarge
                 )
@@ -183,7 +184,7 @@ fun MovieDetailContent(movie: Movie) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = movie.description,
+                text = movie.plot,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp),
                 color = MaterialTheme.colorScheme.onSurface
@@ -193,7 +194,7 @@ fun MovieDetailContent(movie: Movie) {
         Spacer(Modifier.height(16.dp))
         CreditRow(label = "Director", value = movie.director)
         Spacer(Modifier.height(16.dp))
-        CreditRow(label = "Writers", value = movie.writers)
+        CreditRow(label = "Writers", value = movie.writer)
         Spacer(Modifier.height(16.dp))
         CreditRow(label = "Actors", value = movie.actors)
         Spacer(Modifier.height(16.dp))

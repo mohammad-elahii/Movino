@@ -5,34 +5,32 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class DetailScreenViewModel : ViewModel() {
+import androidx.lifecycle.viewModelScope
+import com.example.movino.api.GetMovie
+import com.example.movino.api.initializeClient
+import kotlinx.coroutines.launch
+
+class DetailScreenViewModel(
+    private val movieId: String,
+    private val getMovie: GetMovie = GetMovie(initializeClient())
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DetailUIState>(DetailUIState.Loading)
     val uiState: StateFlow<DetailUIState> = _uiState.asStateFlow()
 
     init {
-        loadMovie()
+        loadMovie(movieId)
     }
 
-    private fun loadMovie() {
-
-        val movie =
-                Movie(
-                        title = "The Shawshank Redemption",
-                        year = "1994",
-                        contentRating = "R",
-                        runtime = "142 min",
-                        genre = "Drama",
-                        imdbRating = "9.3",
-                        metaRating = "81",
-                        description =
-                                "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-                        director = "Frank Darabont",
-                        writers = "Stephan King, Frank Darabont",
-                        actors = "Tim Robbins, Morgan Freeman, Bob Gunton",
-                        posterUrl =
-                            "http://moviesapi.ir/images/tt0111161_screenshot2.jpg",
-                )
-        _uiState.value = DetailUIState.Success(movie)
+    private fun loadMovie(id: String) {
+        viewModelScope.launch {
+            _uiState.value = DetailUIState.Loading
+            try {
+                val movie = getMovie.getMovieById(id)
+                _uiState.value = DetailUIState.Success(movie)
+            } catch (e: Exception) {
+                _uiState.value = DetailUIState.Error(e.message ?: "Unknown error")
+            }
+        }
     }
 }
