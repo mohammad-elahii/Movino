@@ -135,15 +135,15 @@ fun MovieDetailContent(movie: MovieByID) {
         Spacer(Modifier.height(16.dp))
 
         Text(
-                text = movie.title,
+                text = movie.title?: "Not Available",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(Modifier.height(16.dp))
         Text(
                 text =
-                        "${movie.year} . ${movie.rated} . ${movie.runtime} . ${
-                            movie.genres?.joinToString(", ") ?: "N/A"
+                        "${movie.year?:"Not Available"} . ${movie.rated?:"Not Available"} . ${movie.runtime?:"Not Available"} . ${
+                            movie.genres?.joinToString(", ") ?: "Not Available"
                 }",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
@@ -172,7 +172,7 @@ fun MovieDetailContent(movie: MovieByID) {
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
                 )
                 Text(
-                        text = movie.imdb_rating,
+                        text = movie.imdb_rating?: "0.0",
                         color = MaterialTheme.colorScheme.onSecondary,
                         style = MaterialTheme.typography.labelLarge
                 )
@@ -196,7 +196,7 @@ fun MovieDetailContent(movie: MovieByID) {
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
                 )
                 Text(
-                        text = movie.metascore,
+                        text = movie.metascore?: "0.0",
                         color = MaterialTheme.colorScheme.onSecondary,
                         style = MaterialTheme.typography.labelLarge
                 )
@@ -210,7 +210,7 @@ fun MovieDetailContent(movie: MovieByID) {
                 modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                    text = movie.plot,
+                    text = movie.plot?:"Not Available",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onSurface
@@ -218,11 +218,11 @@ fun MovieDetailContent(movie: MovieByID) {
         }
 
         Spacer(Modifier.height(16.dp))
-        CreditRow(label = "Director", value = movie.director)
+        CreditRow(label = "Director", value = movie.director?:"Not Available")
         Spacer(Modifier.height(16.dp))
-        CreditRow(label = "Writers", value = movie.writer)
+        CreditRow(label = "Writers", value = movie.writer?: "Not Available")
         Spacer(Modifier.height(16.dp))
-        CreditRow(label = "Actors", value = movie.actors)
+        CreditRow(label = "Actors", value = movie.actors?: "Not Available")
         Spacer(Modifier.height(16.dp))
         Spacer(modifier = Modifier.height(16.dp))
 
