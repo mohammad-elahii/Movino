@@ -223,7 +223,7 @@ fun DetailedMovieCardInSearch(movie: Movie, modifier: Modifier = Modifier, onCli
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                error = painterResource(R.drawable.ic_not_poster_available),
+                error = painterResource(R.drawable.ic_not_poster_available_portrate),
                     model = movie.poster,
                     contentDescription = null,
                     modifier = Modifier.fillMaxHeight().width(107.dp),
