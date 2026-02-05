@@ -109,9 +109,9 @@ fun HomeScreen(
                     shape = RoundedCornerShape(4.dp),
                     snackbarData = data,
                     modifier = Modifier.padding(vertical = 16.dp, horizontal = 34.dp),
-                    actionContentColor = MaterialTheme.colorScheme.primary,
+                    actionContentColor = MaterialTheme.colorScheme.secondary,
+                    dismissActionContentColor = MaterialTheme.colorScheme.secondary,
                     containerColor = MaterialTheme.colorScheme.onSurface,
-                    contentColor = MaterialTheme.colorScheme.background,
                 )
             }
         }
