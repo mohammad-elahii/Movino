@@ -6,9 +6,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 class GetMovie(val client: HttpClient) {
-    suspend fun getMovies(page: Int = 1): Movies {
+    suspend fun getMovies(page: Int = 1, q: String? = null): Movies {
         return client.get("movies") {
             parameter("page", page)
+            if (q != null) {
+                parameter("q", q)
+            }
         }.body()
     }
 
