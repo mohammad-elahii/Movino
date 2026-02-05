@@ -72,7 +72,6 @@ fun Detailscreen(viewModel: DetailScreenViewModel, onBackClick: () -> Unit = {})
             }
         }
     }
-
     Scaffold(
         topBar = {
             GlobalTopAppBar(
@@ -100,9 +99,11 @@ fun Detailscreen(viewModel: DetailScreenViewModel, onBackClick: () -> Unit = {})
             }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             when (val state = uiState) {
                 is DetailUIState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -181,7 +182,6 @@ fun MovieDetailContent(movie: MovieByID) {
                     modifier = Modifier.size(24.dp),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary)
                 )
-
                 Text(
                     text = movie.imdb_rating,
                     color = MaterialTheme.colorScheme.onSecondary,

@@ -494,6 +494,8 @@ fun DetailedMovieCard(
     }
 }
 
+
+
 @Composable
 fun LoadingIndicator(
     modifier: Modifier = Modifier
