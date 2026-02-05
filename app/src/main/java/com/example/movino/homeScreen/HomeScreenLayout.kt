@@ -15,13 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-
-
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.FilterChipDefaults
@@ -64,6 +61,7 @@ import com.example.movino.ui.components.GlobalTopAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onSearchClick: () -> Unit,
     viewModel: HomeScreenViewModel = viewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -92,7 +90,7 @@ fun HomeScreen(
         topBar = {
             GlobalTopAppBar(
                 title = stringResource(R.string.home),
-                onIconClick = { },
+                onIconClick = onSearchClick,
                 scrollBehavior = scrollBehavior
             ) {
                 Icon(
@@ -190,7 +188,7 @@ fun HomeContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     item(key = "genres") {
-                        Column(modifier = Modifier.padding(end = 16.dp)) {
+                        Column(modifier = Modifier) {
                             Text(
                                 stringResource(R.string.genres),
                                 style = MaterialTheme.typography.titleLarge,
