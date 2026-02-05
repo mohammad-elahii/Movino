@@ -89,7 +89,8 @@ fun MovieDetailContent(movie: MovieByID) {
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
     ) {
         AsyncImage(
-            model = movie.images?.get(0),
+            error = painterResource(R.drawable.ic_not_poster_available),
+            model = movie.images?.firstOrNull(),
             contentDescription = movie.title,
             modifier =
                 Modifier
@@ -109,7 +110,11 @@ fun MovieDetailContent(movie: MovieByID) {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "${movie.year} . ${movie.rated} . ${movie.runtime} . ${movie.genres.joinToString(", ")}",
+            text = "${movie.year} . ${movie.rated} . ${movie.runtime} . ${
+                movie.genres.joinToString(
+                    ", "
+                )
+            }",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
