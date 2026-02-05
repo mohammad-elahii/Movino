@@ -35,11 +35,10 @@ class SearchViewModel(
                         _uiState.value = SearchUIState.Idle
                         return@collectLatest
                     }
-                    
-                    // Reset pagination for new search
+
                     currentPage = 1
                     hasMorePages = true
-                    
+
                     searchMovies(query, isNewSearch = true)
                 }
         }
@@ -53,16 +52,16 @@ class SearchViewModel(
         if (isNewSearch) {
             _uiState.value = SearchUIState.Loading
         } else {
-             if (isFetchingNextPage) return
-             isFetchingNextPage = true
+            if (isFetchingNextPage) return
+            isFetchingNextPage = true
         }
 
         try {
             val response = getMovie.getMovies(page = currentPage, q = query)
-            
+
             val newMovies = response.data
-            hasMorePages = response.metadata.current_page < response.metadata.page_count
-            
+            hasMorePages = response.metadata.currentPage < response.metadata.pageCount
+
             if (isNewSearch) {
                 if (newMovies.isEmpty()) {
                     _uiState.value = SearchUIState.Empty
@@ -72,14 +71,13 @@ class SearchViewModel(
             } else {
                 val currentSuccessState = _uiState.value as? SearchUIState.Success
                 if (currentSuccessState != null) {
-                     _uiState.value = SearchUIState.Success(currentSuccessState.movies + newMovies)
+                    _uiState.value = SearchUIState.Success(currentSuccessState.movies + newMovies)
                 }
             }
         } catch (e: Exception) {
             if (isNewSearch) {
-               _uiState.value = SearchUIState.Error(e.message ?: "Unknown error")
+                _uiState.value = SearchUIState.Error
             }
-             // Handle pagination error silently or with a specific state if needed
         } finally {
             isFetchingNextPage = false
         }

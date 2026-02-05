@@ -7,5 +7,5 @@ sealed class SearchUIState {
     object Loading : SearchUIState()
     data class Success(val movies: List<Movie>) : SearchUIState()
     object Empty : SearchUIState()
-    data class Error(val message: String) : SearchUIState()
+    data object Error : SearchUIState()
 }

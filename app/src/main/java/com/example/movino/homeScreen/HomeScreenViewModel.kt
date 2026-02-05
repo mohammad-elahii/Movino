@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(private val getMovie: GetMovie = GetMovie(initializeClient())) :
-        ViewModel() {
+    ViewModel() {
 
     private val _genres = MutableStateFlow<List<GenreItems>>(emptyList())
     val genres: StateFlow<List<GenreItems>> = _genres
@@ -66,7 +66,7 @@ class HomeScreenViewModel(private val getMovie: GetMovie = GetMovie(initializeCl
                 _currentPage.value = 1
                 val response = getMovie.getMovies(page = 1)
                 _movies.value = response.data
-                _hasMorePages.value = response.metadata.current_page < response.metadata.page_count
+                _hasMorePages.value = response.metadata.currentPage < response.metadata.pageCount
                 filterMovies()
             } catch (e: Exception) {
                 val message = e.message ?: "Unknown error"
@@ -83,9 +83,9 @@ class HomeScreenViewModel(private val getMovie: GetMovie = GetMovie(initializeCl
             try {
                 val nextPage = _currentPage.value + 1
                 val response = getMovie.getMovies(page = nextPage)
-                _movies.value = _movies.value + response.data
+                _movies.value += response.data
                 _currentPage.value = nextPage
-                _hasMorePages.value = response.metadata.current_page < response.metadata.page_count
+                _hasMorePages.value = response.metadata.currentPage < response.metadata.pageCount
                 filterMovies()
             } catch (e: Exception) {
                 val message = e.message ?: "Unknown error"
@@ -111,14 +111,14 @@ class HomeScreenViewModel(private val getMovie: GetMovie = GetMovie(initializeCl
 
     private fun filterMovies() {
         _filteredMovies.value =
-                if (_selectedGenreId.value == -1) {
-                    _movies.value
-                } else {
-                    val selectedGenreName =
-                            _genres.value.find { it.id == _selectedGenreId.value }?.name
-                    _movies.value.filter { movie ->
-                        movie.genres != null && selectedGenreName in movie.genres
-                    }
+            if (_selectedGenreId.value == -1) {
+                _movies.value
+            } else {
+                val selectedGenreName =
+                    _genres.value.find { it.id == _selectedGenreId.value }?.name
+                _movies.value.filter { movie ->
+                    movie.genres != null && selectedGenreName in movie.genres
                 }
+            }
     }
 }

@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.movino.R
 
-// Set of Material typography styles to start with
+
 val Typography: Typography
     get() = Typography(
         displayLarge = TextStyle(

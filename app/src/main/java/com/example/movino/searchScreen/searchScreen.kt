@@ -47,67 +47,70 @@ import com.example.movino.ui.components.GlobalTopAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-        onBackClick: () -> Unit,
-        onMovieClick: (Int) -> Unit,
-        viewModel: SearchViewModel = viewModel()
+    onBackClick: () -> Unit,
+    onMovieClick: (Int) -> Unit,
+    viewModel: SearchViewModel = viewModel()
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
-            topBar = {
-                GlobalTopAppBar(title = "Search", onIconClick = onBackClick) {
-                    Icon(
-                            painter = painterResource(R.drawable.ic_back_icon),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+        topBar = {
+            GlobalTopAppBar(title = "Search", onIconClick = onBackClick) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_back_icon),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
+        }
     ) { innerPadding ->
         Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
             TextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.onSearchQueryChanged(it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = {
-                        Text(
-                                text = stringResource(R.string.text_field_hint),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                                modifier = Modifier.size(18.dp),
-                                painter = painterResource(R.drawable.ic_search_icon),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    trailingIcon = {
-                        when {
-                            uiState is SearchUIState.Loading && searchQuery.isNotEmpty() -> {
-                                CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                value = searchQuery,
+                onValueChange = { viewModel.onSearchQueryChanged(it) },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.text_field_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        modifier = Modifier.size(18.dp),
+                        painter = painterResource(R.drawable.ic_search_icon),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
+                trailingIcon = {
+                    when {
+                        uiState is SearchUIState.Loading && searchQuery.isNotEmpty() -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         }
-                    },
-                    colors =
-                            TextFieldDefaults.colors(
-                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                            ),
-                    shape = MaterialTheme.shapes.medium,
-                    singleLine = true
+                    }
+                },
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                shape = MaterialTheme.shapes.medium,
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -117,16 +120,18 @@ fun SearchScreen(
                 is SearchUIState.Loading -> {}
                 is SearchUIState.Success -> {
                     SearchResults(
-                            movies = (uiState as SearchUIState.Success).movies,
-                            onMovieClick = onMovieClick,
-                            onLoadMore = { viewModel.loadNextPage() }
+                        movies = (uiState as SearchUIState.Success).movies,
+                        onMovieClick = onMovieClick,
+                        onLoadMore = { viewModel.loadNextPage() }
                     )
                 }
+
                 is SearchUIState.Empty -> {
                     NoResultsState()
                 }
+
                 is SearchUIState.Error -> {
-                    ErrorState(message = (uiState as SearchUIState.Error).message)
+                    ErrorState()
                 }
             }
         }
@@ -135,9 +140,9 @@ fun SearchScreen(
 
 @Composable
 fun SearchResults(
-        movies: List<Movie>,
-        onMovieClick: (Int) -> Unit,
-        onLoadMore: () -> Unit
+    movies: List<Movie>,
+    onMovieClick: (Int) -> Unit,
+    onLoadMore: () -> Unit
 ) {
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
 
@@ -161,23 +166,23 @@ fun NoResultsState() {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Row {
             Icon(
-                    painter = painterResource(R.drawable.ic_no_result_found),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onBackground
+                painter = painterResource(R.drawable.ic_no_result_found),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
-                        text = stringResource(R.string.not_found_error),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground
+                    text = stringResource(R.string.not_found_error),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                        text = stringResource(R.string.not_found_try_again),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground
+                    text = stringResource(R.string.not_found_try_again),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -185,28 +190,28 @@ fun NoResultsState() {
 }
 
 @Composable
-fun ErrorState(message: String) {
+fun ErrorState() {
     Spacer(modifier = Modifier.height(16.dp))
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Row {
             Icon(
-                    painter = painterResource(R.drawable.ic_something_went_wrong),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onBackground
+                painter = painterResource(R.drawable.ic_something_went_wrong),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
-                        text = stringResource(R.string.handling_error),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground
+                    text = stringResource(R.string.handling_error),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                        text = stringResource(R.string.error_retry_statement),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground
+                    text = stringResource(R.string.error_retry_statement),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -216,113 +221,126 @@ fun ErrorState(message: String) {
 @Composable
 fun DetailedMovieCardInSearch(movie: Movie, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
-            modifier = modifier.width(375.dp).height(160.dp),
-            shape = MaterialTheme.shapes.medium,
-            onClick = onClick,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        modifier = modifier
+            .width(375.dp)
+            .height(160.dp),
+        shape = MaterialTheme.shapes.medium,
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 error = painterResource(R.drawable.ic_not_poster_available_portrate),
-                    model = movie.poster,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxHeight().width(107.dp),
-                    contentScale = ContentScale.Crop
+                model = movie.poster,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(107.dp),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier =
-                            Modifier.fillMaxSize().padding(top = 18.dp, bottom = 18.dp, end = 1.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = 18.dp, bottom = 18.dp, end = 1.dp)
             ) {
                 Text(
-                        text = movie.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurface
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Image(
-                                painter = painterResource(R.drawable.ic_country),
-                                contentDescription = null,
-                                modifier = Modifier.width(12.dp).height(16.dp),
-                                colorFilter =
-                                        ColorFilter.tint(
-                                                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-                                        )
+                            painter = painterResource(R.drawable.ic_country),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(12.dp)
+                                .height(16.dp),
+                            colorFilter =
+                                ColorFilter.tint(
+                                    MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                                )
                         )
 
                         Text(
-                                text = movie.country ?: "No Country In API Response",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
+                            text = movie.country ?: "No Country In API Response",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
                     Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Image(
-                                painter = painterResource(R.drawable.ic_date),
-                                contentDescription = null,
-                                modifier = Modifier.width(12.dp).height(16.dp),
-                                colorFilter =
-                                        ColorFilter.tint(
-                                                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-                                        )
+                            painter = painterResource(R.drawable.ic_date),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(12.dp)
+                                .height(16.dp),
+                            colorFilter =
+                                ColorFilter.tint(
+                                    MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                                )
                         )
 
                         Text(
-                                text = movie.year ?: "Not Available",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
+                            text = movie.year ?: "Not Available",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
                     Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Image(
-                                painter = painterResource(R.drawable.ic_genres),
-                                contentDescription = null,
-                                modifier = Modifier.width(12.dp).height(16.dp),
-                                colorFilter =
-                                        ColorFilter.tint(
-                                                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-                                        )
+                            painter = painterResource(R.drawable.ic_genres),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(12.dp)
+                                .height(16.dp),
+                            colorFilter =
+                                ColorFilter.tint(
+                                    MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                                )
                         )
 
                         Text(
-                                text = movie.genres?.take(2)?.joinToString(", ") ?: "Not Available",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                            text = movie.genres?.take(2)?.joinToString(", ") ?: "Not Available",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
                     Box(
-                            modifier =
-                                    Modifier.background(
-                                                    color = MaterialTheme.colorScheme.secondary,
-                                                    shape = MaterialTheme.shapes.medium
-                                            )
-                                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    shape = MaterialTheme.shapes.medium
+                                )
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                         Text(
-                                text = "IMDb: ${movie.imdb_rating ?: "0.0"}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSecondary
+                            text = "IMDb: ${movie.imdbRating ?: "0.0"}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     }
                 }

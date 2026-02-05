@@ -21,7 +21,7 @@ import com.example.movino.ui.theme.OnPrimaryLight
 import com.example.movino.ui.theme.PrimaryLight
 
 @Composable
-fun SplashUI(modifier: Modifier = Modifier) {
+fun SplashUI() {
     Box(
         modifier = Modifier
             .fillMaxSize()
