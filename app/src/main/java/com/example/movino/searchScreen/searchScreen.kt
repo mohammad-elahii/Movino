@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movino.R
 import com.example.movino.api.Movie
+import com.example.movino.ui.components.GlobalSearchLoadingIndicator
 import com.example.movino.ui.components.GlobalTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,10 +92,7 @@ fun SearchScreen(
                     trailingIcon = {
                         when {
                             uiState is SearchUIState.Loading && searchQuery.isNotEmpty() -> {
-                                CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                )
+                                GlobalSearchLoadingIndicator()
                             }
                         }
                     },
@@ -134,11 +131,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchResults(
-        movies: List<Movie>,
-        onMovieClick: (Int) -> Unit,
-        onLoadMore: () -> Unit
-) {
+fun SearchResults(movies: List<Movie>, onMovieClick: (Int) -> Unit, onLoadMore: () -> Unit) {
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
 
     val isAtBottom = !listState.canScrollForward
@@ -223,7 +216,7 @@ fun DetailedMovieCardInSearch(movie: Movie, modifier: Modifier = Modifier, onCli
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                error = painterResource(R.drawable.ic_not_poster_available_portrate),
+                    error = painterResource(R.drawable.ic_not_poster_available),
                     model = movie.poster,
                     contentDescription = null,
                     modifier = Modifier.fillMaxHeight().width(107.dp),
