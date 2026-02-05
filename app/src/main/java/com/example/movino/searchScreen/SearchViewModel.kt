@@ -23,13 +23,12 @@ class SearchViewModel(
     @OptIn(FlowPreview::class)
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
-        
+
         if (query.isBlank()) {
             _uiState.value = SearchUIState.Idle
             return
         }
-        
-        // Perform search
+
         searchMovies(query)
     }
 
@@ -42,7 +41,7 @@ class SearchViewModel(
                 val filteredMovies = response.data.filter { movie ->
                     movie.title.contains(query, ignoreCase = true)
                 }
-                
+
                 _uiState.value = if (filteredMovies.isEmpty()) {
                     SearchUIState.Empty
                 } else {

@@ -39,6 +39,7 @@ import com.example.movino.ui.components.GlobalTopAppBar
 @Composable
 fun SearchScreen(
     onBackClick: () -> Unit,
+    onMovieClick: (Int) -> Unit,
     viewModel: SearchViewModel = viewModel()
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -119,7 +120,10 @@ fun SearchScreen(
                 }
 
                 is SearchUIState.Success -> {
-                    SearchResults(movies = (uiState as SearchUIState.Success).movies)
+                    SearchResults(
+                        movies = (uiState as SearchUIState.Success).movies,
+                        onMovieClick = onMovieClick
+                    )
                 }
 
                 is SearchUIState.Empty -> {
@@ -136,12 +140,18 @@ fun SearchScreen(
 
 
 @Composable
-fun SearchResults(movies: List<com.example.movino.api.Movie>) {
+fun SearchResults(
+    movies: List<com.example.movino.api.Movie>,
+    onMovieClick: (Int) -> Unit
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movies, key = { it.id }) { movie ->
-            DetailedMovieCard(movie = movie)
+            DetailedMovieCard(
+                movie = movie,
+                onClick = { onMovieClick(movie.id) }
+            )
         }
     }
 }

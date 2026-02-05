@@ -62,6 +62,7 @@ import com.example.movino.ui.components.GlobalTopAppBar
 @Composable
 fun HomeScreen(
     onSearchClick: () -> Unit,
+    onMovieClick: (Int) -> Unit,
     viewModel: HomeScreenViewModel = viewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -131,6 +132,7 @@ fun HomeScreen(
             uiState = uiState.value,
             movies = filteredMovies.value,
             onGenreSelect = { genreId -> viewModel.selectGenre(genreId) },
+            onMovieClick = onMovieClick,
             onLoadMore = { viewModel.loadMoreMovies() },
             hasMorePages = hasMorePages.value,
             isLoadingMore = isLoadingMore.value
@@ -147,6 +149,7 @@ fun HomeContent(
     uiState: HomeUIState,
     movies: List<Movie>,
     onGenreSelect: (Int) -> Unit,
+    onMovieClick: (Int) -> Unit,
     onLoadMore: () -> Unit = {},
     hasMorePages: Boolean = false,
     isLoadingMore: Boolean = false
@@ -217,7 +220,10 @@ fun HomeContent(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(movies.take(10), key = { it.id }) { movie ->
-                                FeaturedMovieCard(movie = movie)
+                                FeaturedMovieCard(
+                                    movie = movie,
+                                    onClick = { onMovieClick(movie.id) }
+                                )
                             }
                         }
                     }
@@ -225,7 +231,10 @@ fun HomeContent(
                         items = movies,
                         key = { it.id }
                     ) { movie ->
-                        DetailedMovieCard(movie = movie)
+                        DetailedMovieCard(
+                            movie = movie,
+                            onClick = { onMovieClick(movie.id) }
+                        )
                     }
                     if (isLoadingMore) {
                         item(key = "more") {
@@ -294,13 +303,15 @@ fun GenresFilterRow(
 @Composable
 fun FeaturedMovieCard(
     movie: Movie,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier
             .width(265.dp)
             .height(148.dp),
         shape = MaterialTheme.shapes.medium,
+        onClick = onClick
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -339,7 +350,8 @@ fun FeaturedMovieCard(
 @Composable
 fun DetailedMovieCard(
     movie: Movie,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier
@@ -347,6 +359,7 @@ fun DetailedMovieCard(
             .height(160.dp)
             .padding(end = 16.dp),
         shape = MaterialTheme.shapes.medium,
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )

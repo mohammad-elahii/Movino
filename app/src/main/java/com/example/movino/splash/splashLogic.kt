@@ -1,7 +1,6 @@
 package com.example.movino.splash
 
 
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
