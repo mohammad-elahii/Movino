@@ -27,6 +27,13 @@ class HomeScreenViewModel(
     private val _filteredMovies = MutableStateFlow<List<Movie>>(emptyList())
     val filteredMovies: StateFlow<List<Movie>> = _filteredMovies
 
+    private val _currentPage = MutableStateFlow(1)
+    private val _hasMorePages = MutableStateFlow(true)
+    val hasMorePages: StateFlow<Boolean> = _hasMorePages
+
+    private val _isLoadingMore = MutableStateFlow(false)
+    val isLoadingMore: StateFlow<Boolean> = _isLoadingMore
+
     private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState.Loading)
     val uiState: StateFlow<HomeUIState> = _uiState
 
@@ -57,13 +64,35 @@ class HomeScreenViewModel(
     private fun fetchMovies() {
         viewModelScope.launch {
             try {
-                val response = getMovie.getMovies()
+                _currentPage.value = 1
+                val response = getMovie.getMovies(page = 1)
                 _movies.value = response.data
+                _hasMorePages.value = response.metadata.current_page < response.metadata.page_count
                 filterMovies()
             } catch (e: Exception) {
                 val message = e.message ?: "Unknown error"
                 _uiState.value = HomeUIState.Error(message)
                 _errorEvents.emit(HomeEvent.ShowError(message))
+            }
+        }
+    }
+
+    fun loadMoreMovies() {
+        if (!_hasMorePages.value || _isLoadingMore.value) return
+        viewModelScope.launch {
+            _isLoadingMore.value = true
+            try {
+                val nextPage = _currentPage.value + 1
+                val response = getMovie.getMovies(page = nextPage)
+                _movies.value = _movies.value + response.data
+                _currentPage.value = nextPage
+                _hasMorePages.value = response.metadata.current_page < response.metadata.page_count
+                filterMovies()
+            } catch (e: Exception) {
+                val message = e.message ?: "Unknown error"
+                _errorEvents.emit(HomeEvent.ShowError(message))
+            } finally {
+                _isLoadingMore.value = false
             }
         }
     }

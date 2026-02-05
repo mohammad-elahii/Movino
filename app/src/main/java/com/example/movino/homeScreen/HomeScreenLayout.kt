@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 
@@ -34,6 +37,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -118,6 +122,8 @@ fun HomeScreen(
         val selectedGenreId = viewModel.selectedGenreId.collectAsStateWithLifecycle()
         val filteredMovies = viewModel.filteredMovies.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+        val hasMorePages = viewModel.hasMorePages.collectAsStateWithLifecycle()
+        val isLoadingMore = viewModel.isLoadingMore.collectAsStateWithLifecycle()
 
         HomeContent(
             modifier = Modifier.padding(innerPadding),
@@ -126,7 +132,10 @@ fun HomeScreen(
             filteredMovies = filteredMovies.value,
             uiState = uiState.value,
             movies = filteredMovies.value,
-            onGenreSelect = { genreId -> viewModel.selectGenre(genreId) }
+            onGenreSelect = { genreId -> viewModel.selectGenre(genreId) },
+            onLoadMore = { viewModel.loadMoreMovies() },
+            hasMorePages = hasMorePages.value,
+            isLoadingMore = isLoadingMore.value
         )
     }
 }
@@ -139,8 +148,27 @@ fun HomeContent(
     filteredMovies: List<Movie>,
     uiState: HomeUIState,
     movies: List<Movie>,
-    onGenreSelect: (Int) -> Unit
+    onGenreSelect: (Int) -> Unit,
+    onLoadMore: () -> Unit = {},
+    hasMorePages: Boolean = false,
+    isLoadingMore: Boolean = false
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val canLoadMore = hasMorePages && !isLoadingMore
+            Triple(lastVisibleIndex, totalItems, canLoadMore)
+        }.collect { (lastVisibleIndex, totalItems, canLoadMore) ->
+            if (totalItems > 0 && lastVisibleIndex >= totalItems - 5 && canLoadMore) {
+                onLoadMore()
+            }
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -157,6 +185,7 @@ fun HomeContent(
 
             is HomeUIState.Success -> {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -199,6 +228,21 @@ fun HomeContent(
                         key = { it.id }
                     ) { movie ->
                         DetailedMovieCard(movie = movie)
+                    }
+                    if (isLoadingMore) {
+                        item(key = "loading_more") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -267,11 +311,13 @@ fun FeaturedMovieCard(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
+            val imageUrl = movie.images?.firstOrNull() ?: movie.poster
+
             AsyncImage(
-                model = movie.images[0],
+                model = imageUrl,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Crop
             )
 
             Box(

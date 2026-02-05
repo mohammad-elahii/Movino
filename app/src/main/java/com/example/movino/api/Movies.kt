@@ -14,7 +14,7 @@ data class Movie(
     val title: String,
     val poster: String,
     val genres: List<String>,
-    val images: List<String>,
+    val images: List<String>? = null,
     val country: String? = null,
     val year: String? = null,
     val imdb_rating: String? = null,
@@ -43,7 +43,7 @@ data class MovieByID(
     val metascore: String,
     val imdb_rating: String,
     val genres: List<String>,
-    val images: List<String>
+    val images: List<String>? = null
 )
 
 @Serializable
