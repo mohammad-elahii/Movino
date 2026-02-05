@@ -230,17 +230,13 @@ fun HomeContent(
                         DetailedMovieCard(movie = movie)
                     }
                     if (isLoadingMore) {
-                        item(key = "loading_more") {
+                        item(key = "more") {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
-                                contentAlignment = Alignment.Center
                             ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(32.dp),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+
                             }
                         }
                     }
@@ -382,10 +378,11 @@ fun DetailedMovieCard(
                 Text(
                     text = movie.title,
                     style = MaterialTheme.typography.titleSmall,
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
