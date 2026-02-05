@@ -12,9 +12,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeScreenViewModel(
-    private val getMovie: GetMovie = GetMovie(initializeClient())
-) : ViewModel() {
+class HomeScreenViewModel(private val getMovie: GetMovie = GetMovie(initializeClient())) :
+        ViewModel() {
 
     private val _genres = MutableStateFlow<List<GenreItems>>(emptyList())
     val genres: StateFlow<List<GenreItems>> = _genres
@@ -111,15 +110,15 @@ class HomeScreenViewModel(
     }
 
     private fun filterMovies() {
-        _filteredMovies.value = if (_selectedGenreId.value == -1) {
-            _movies.value
-        } else {
-            val selectedGenreName = _genres.value.find { it.id == _selectedGenreId.value }?.name
-            _movies.value.filter { movie ->
-                selectedGenreName in movie.genres
-            }
-        }
+        _filteredMovies.value =
+                if (_selectedGenreId.value == -1) {
+                    _movies.value
+                } else {
+                    val selectedGenreName =
+                            _genres.value.find { it.id == _selectedGenreId.value }?.name
+                    _movies.value.filter { movie ->
+                        movie.genres != null && selectedGenreName in movie.genres
+                    }
+                }
     }
 }
-
-
