@@ -324,9 +324,9 @@ fun FeaturedMovieCard(movie: Movie, modifier: Modifier = Modifier, onClick: () -
 fun DetailedMovieCard(movie: Movie, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         modifier = modifier
-            .width(375.dp)
-            .height(160.dp)
-            .padding(end = 16.dp),
+            .fillMaxWidth()
+            .padding(end = 16.dp)
+            .height(160.dp),
         shape = MaterialTheme.shapes.medium,
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
